@@ -1,5 +1,7 @@
 # CS2Draw
-CS2Draw is a centralized world-space shape rendering service for CS2 plugins. CS2Draw handles the particles, lifetime, and cleanup. Particles Must be created using an addon. For help feel free to reach out to me on discord or chekc the examples.
+CS2Draw is a centralized world-space shape rendering service for CS2 plugins using CParticleSystems. CS2Draw handles the particles, lifetime, and cleanup. Particles Must be created using an addon. For help feel free to reach out to me on discord or chekc the examples.
+
+This package was built for use on [EdgeGamers](https://www.edgegamers.com/forums/news/) servers and is shared as a demonstration of what's possible with CS2 particles. It isn't intended for wide use, but if it gains traction I'll look into expanding it — including `CEnvBeam` support and growing it into a more fully-featured drawing utility.
 
 # CS2Draw.Shared
 The shared contracts library for CS2Draw. This is the **only** project your plugin needs to reference.
