@@ -4,11 +4,11 @@ namespace CS2DrawShared.Builders;
 
 public sealed class CustomBuilder : ShapeBuilder<CustomBuilder>
 {
-  internal IShapeSetup Setup { get; }
+  public IShapeSetup Setup { get; }
 
   private readonly Func<CustomBuilder, IDrawHandle> commit;
 
-  internal CustomBuilder(Vector origin, IShapeSetup setup, Func<CustomBuilder, IDrawHandle> commit)
+  public CustomBuilder(Vector origin, IShapeSetup setup, Func<CustomBuilder, IDrawHandle> commit)
     : base(origin)
   {
     Setup       = setup;

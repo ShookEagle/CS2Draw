@@ -4,12 +4,12 @@ namespace CS2DrawShared.Builders;
 
 public sealed class CircleBuilder : ShapeBuilder<CircleBuilder>
 {
-  internal float Radius   { get; private set; }
-  internal int   Segments { get; private set; } = 32;
+  public float Radius   { get; private set; }
+  public int   Segments { get; private set; } = 32;
 
   private readonly Func<CircleBuilder, IDrawHandle> commit;
 
-  internal CircleBuilder(Vector origin, float radius, Func<CircleBuilder, IDrawHandle> commit)
+  public CircleBuilder(Vector origin, float radius, Func<CircleBuilder, IDrawHandle> commit)
     : base(origin)
   {
     Radius      = radius;

@@ -10,12 +10,12 @@ namespace CS2DrawShared.Builders;
 /// T is the concrete builder so the chain never loses its type.
 /// </summary>
 public abstract class ShapeBuilder<T> where T : ShapeBuilder<T> {
-  protected Vector Origin;
-  protected int ParticleCount = 20;
+  public Vector Origin;
+  public int ParticleCount = 20;
   protected float Lifetime = 5f;
   protected bool IsInfinite = false;
-  protected Color? TintColor;
-  protected int TintCp = 1;
+  public Color? TintColor;
+  public int TintCp = 1;
 
   protected ShapeBuilder(Vector origin) { Origin = origin; }
 
