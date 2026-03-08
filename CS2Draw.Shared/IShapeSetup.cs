@@ -16,5 +16,5 @@ public interface IShapeSetup
   /// Set your control points here. Called after the particle is created
   /// and teleported, before DispatchSpawn and Start.
   /// </summary>
-  void Configure(IParticleConfigurator configurator);
+  void Configure(IParticleConfigurator configurator, int particleCount);
 }
