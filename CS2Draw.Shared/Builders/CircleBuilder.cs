@@ -2,7 +2,7 @@ using CounterStrikeSharp.API.Modules.Utils;
 
 namespace CS2DrawShared.Builders;
 
-public sealed class CircleBuilder : DrawBuilder<CircleBuilder>
+public sealed class CircleBuilder : ShapeBuilder<CircleBuilder>
 {
   internal float Radius   { get; private set; }
   internal int   Segments { get; private set; } = 32;

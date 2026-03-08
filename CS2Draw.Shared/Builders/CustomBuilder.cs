@@ -2,7 +2,7 @@ using CounterStrikeSharp.API.Modules.Utils;
 
 namespace CS2DrawShared.Builders;
 
-public sealed class CustomBuilder : DrawBuilder<CustomBuilder>
+public sealed class CustomBuilder : ShapeBuilder<CustomBuilder>
 {
   internal IShapeSetup Setup { get; }
 

@@ -9,7 +9,7 @@ namespace CS2DrawShared.Builders;
 /// Base fluent builder. Every shape builder inherits these.
 /// T is the concrete builder so the chain never loses its type.
 /// </summary>
-public abstract class DrawBuilder<T> where T : DrawBuilder<T> {
+public abstract class ShapeBuilder<T> where T : ShapeBuilder<T> {
   protected Vector Origin;
   protected int ParticleCount = 20;
   protected float Lifetime = 5f;
@@ -17,7 +17,7 @@ public abstract class DrawBuilder<T> where T : DrawBuilder<T> {
   protected Color? TintColor;
   protected int TintCp = 1;
 
-  protected DrawBuilder(Vector origin) { Origin = origin; }
+  protected ShapeBuilder(Vector origin) { Origin = origin; }
 
   /// <summary>How many particles to spawn for this shape.</summary>
   public T Particles(int count) {

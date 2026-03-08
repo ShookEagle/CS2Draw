@@ -2,7 +2,7 @@ using CounterStrikeSharp.API.Modules.Utils;
 
 namespace CS2DrawShared.Builders;
 
-public sealed class RectangleBuilder : DrawBuilder<RectangleBuilder>
+public sealed class RectangleBuilder : ShapeBuilder<RectangleBuilder>
 {
   internal float Width  { get; private set; }
   internal float Height { get; private set; }
