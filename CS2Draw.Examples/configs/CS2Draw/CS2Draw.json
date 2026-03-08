@@ -1,0 +1,17 @@
+﻿{
+  "shapes": {
+    "circle": "particles/shapes/circle.vpcf",
+    "triangle": "particles/shapes/triangle.vpcf",
+    "square": "particles/shapes/square.vpcf",
+    "diamond": "particles/shapes/diamond.vpcf",
+    "pentagon": "particles/shapes/pentagon.vpcf",
+    "hexagon": "particles/shapes/hexagon.vpcf",
+    "star": "particles/shapes/star.vpcf",
+    "heart": "particles/shapes/heart.vpcf",
+    "among_us": "particles/shapes/among_us.vpcf",
+    "jelly_bean": "particles/shapes/jelly_bean.vpcf"
+  },
+  "custom": {
+    "my_custom_shape": "particles/shapes/my_custom_shape.vpcf"
+  } 
+}
