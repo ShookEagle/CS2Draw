@@ -6,10 +6,9 @@ namespace CS2DrawShared;
 /// <summary>
 /// Resolved via PluginCapability. The only thing consumer plugins need.
 /// </summary>
-public interface IDrawService
-{
+public interface IDrawService {
   // Built-in shapes 
-  CircleBuilder    Circle(Vector origin, float radius);
+  CircleBuilder Circle(Vector origin, float radius);
   RectangleBuilder Rectangle(Vector origin, float width, float height);
 
   // Custom shapes

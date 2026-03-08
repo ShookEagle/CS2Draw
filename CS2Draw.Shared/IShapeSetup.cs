@@ -4,8 +4,7 @@ namespace CS2DrawShared;
 /// Implement this to register a custom shape with CS2Draw.
 /// CS2Draw owns the spawn sequence — you only set control points here.
 /// </summary>
-public interface IShapeSetup
-{
+public interface IShapeSetup {
   /// <summary>
   /// Key that maps to an effect name in cs2draw.json.
   /// e.g. "my_star" -> "particles/myaddon/star.vpcf"

@@ -7,17 +7,15 @@ public class DrawHandle : IDrawHandle {
   private readonly CParticleSystem particle;
   private readonly Action<DrawHandle> onCancel;
 
-  public Guid Id      { get; } = Guid.NewGuid();
+  public Guid Id { get; } = Guid.NewGuid();
   public bool IsAlive { get; private set; } = true;
 
-  internal DrawHandle(CParticleSystem particle, Action<DrawHandle> onCancel)
-  {
+  internal DrawHandle(CParticleSystem particle, Action<DrawHandle> onCancel) {
     this.particle = particle;
     this.onCancel = onCancel;
   }
 
-  public void Cancel()
-  {
+  public void Cancel() {
     if (!IsAlive) return;
     IsAlive = false;
 

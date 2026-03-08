@@ -13,6 +13,7 @@ public sealed class DrawService(CS2DrawConfig config) : IDrawService {
   private readonly Dictionary<string, IShapeSetup> customShapes = new();
 
   #region IDrawService
+
   // IDrawService
   public CircleBuilder Circle(Vector origin, float radius)
     => new(origin, radius,
@@ -32,9 +33,9 @@ public sealed class DrawService(CS2DrawConfig config) : IDrawService {
   public void CancelAll() {
     foreach (var handle in handles.Values.ToArray()) handle.Cancel();
   }
-  
+
   #endregion
-  
+
   // ── Spawn sequence ────────────────────────────────────────────────────────
 
   private IDrawHandle spawn<T>(Vector origin, IShapeSetup setup,

@@ -2,23 +2,14 @@ using CounterStrikeSharp.API.Modules.Utils;
 
 namespace CS2DrawShared.Builders;
 
-public sealed class CircleBuilder : ShapeBuilder<CircleBuilder>
-{
-  public float Radius   { get; private set; }
-  public int   Segments { get; private set; } = 32;
-
-  private readonly Func<CircleBuilder, IDrawHandle> commit;
-
-  public CircleBuilder(Vector origin, float radius, Func<CircleBuilder, IDrawHandle> commit)
-    : base(origin)
-  {
-    Radius      = radius;
-    this.commit = commit;
-  }
+public sealed class CircleBuilder(Vector origin, float radius,
+  Func<CircleBuilder, IDrawHandle> commit)
+  : ShapeBuilder<CircleBuilder>(origin) {
+  public float Radius { get; private set; } = radius;
+  public int Segments { get; private set; } = 32;
 
   /// <summary>How many line segments approximate the circle. Higher = smoother.</summary>
-  public CircleBuilder WithSegments(int segments)
-  {
+  public CircleBuilder WithSegments(int segments) {
     Segments = segments;
     return this;
   }

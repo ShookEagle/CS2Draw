@@ -8,7 +8,8 @@ namespace CS2Draw.Shapes;
 /// Rectangle has 4 sides so valid CP count = (floor(n / 4) * 4) + 1
 /// e.g. 16 particles → 17 CP value (4 per side + closing point)
 /// </summary>
-internal sealed class RectangleShapeSetup(float width, float height) : IShapeSetup {
+internal sealed class RectangleShapeSetup(float width, float height)
+  : IShapeSetup {
   public string EffectKey => "rectangle";
 
   public void Configure(IParticleConfigurator cp, int particleCount) {
