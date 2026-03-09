@@ -12,7 +12,7 @@ internal sealed class CircleShapeSetup(float radius, int particles)
   public string EffectKey => "circle";
 
   public void Configure(IParticleConfigurator cp, int particleCount) {
-    cp.SetCp(2, particleCount, 0, 0);
+    cp.SetCp(2, particleCount, particleCount-1, 0);
     cp.SetCp(5, radius, 0, 0);
   }
 }

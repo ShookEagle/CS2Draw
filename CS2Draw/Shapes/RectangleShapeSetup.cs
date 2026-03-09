@@ -10,7 +10,7 @@ namespace CS2Draw.Shapes;
 /// </summary>
 internal sealed class RectangleShapeSetup(float width, float height)
   : IShapeSetup {
-  public string EffectKey => "rectangle";
+  public string EffectKey => "square";
 
   public void Configure(IParticleConfigurator cp, int particleCount) {
     var count = ParticleMath.CalcCount(particleCount, sides: 4);

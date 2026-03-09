@@ -30,4 +30,5 @@ public class DrawHandle : IDrawHandle {
   // Options being explored:
   //   - Server-side timer that calls Cancel() after n seconds
   //   - Hooking particle death events if exposed by CSS#
+  //   - Possibly Look into EndCap effects to allow particles to have a smooth end or fade out
 }
