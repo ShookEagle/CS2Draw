@@ -4,7 +4,7 @@ namespace CS2DrawShared.Builders;
 
 public sealed class RectangleBuilder(Vector origin, float width, float height,
   Func<RectangleBuilder, IDrawHandle> commit)
-  : ShapeBuilder<RectangleBuilder>(origin) {
+  : DrawBuilder<RectangleBuilder>(origin) {
   public float Width { get; private set; } = width;
   public float Height { get; private set; } = height;
 

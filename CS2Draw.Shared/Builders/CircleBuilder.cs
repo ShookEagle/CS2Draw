@@ -4,7 +4,7 @@ namespace CS2DrawShared.Builders;
 
 public sealed class CircleBuilder(Vector origin, float radius,
   Func<CircleBuilder, IDrawHandle> commit)
-  : ShapeBuilder<CircleBuilder>(origin) {
+  : DrawBuilder<CircleBuilder>(origin) {
   public float Radius { get; private set; } = radius;
   public int Segments { get; private set; } = 32;
 
