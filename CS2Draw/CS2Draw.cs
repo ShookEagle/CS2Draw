@@ -24,6 +24,15 @@ public class CS2Draw : BasePlugin, IPluginConfig<CS2DrawConfig> {
   public override void Load(bool hotReload) {
     service = new DrawService(Config);
     Capabilities.RegisterPluginCapability(CAPABILITY, () => service);
+    RegisterListener<Listeners.OnServerPrecacheResources>(manifest => {
+      foreach (var resource in Config.Shapes.Values) {
+        manifest.AddResource(resource);
+      }
+
+      foreach (var resource in Config.Custom.Values) {
+        manifest.AddResource(resource);
+      }
+    });
   }
 
   public override void Unload(bool hotReload) { service?.CancelAll(); }
