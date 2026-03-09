@@ -1,3 +1,4 @@
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
 using CS2DrawShared.Builders;
 
@@ -7,9 +8,16 @@ namespace CS2DrawShared;
 /// Resolved via PluginCapability. The only thing consumer plugins need.
 /// </summary>
 public interface IDrawService {
-  // Built-in shapes 
+  // Shapes
   CircleBuilder Circle(Vector origin, float radius);
   RectangleBuilder Rectangle(Vector origin, float width, float height);
+
+  // Beams
+  BeamBuilder Beam(Vector from, Vector to);
+
+  // Looping
+  BeaconBuilder Beacon(CCSPlayerController player);
+  TrailBuilder Trail(CBaseEntity anchor);
 
   // Custom shapes
 
@@ -22,6 +30,6 @@ public interface IDrawService {
   /// <summary>Draw a previously registered custom shape by its effect key.</summary>
   CustomBuilder Custom(Vector origin, IShapeSetup setup);
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+  // Lifecycle 
   void CancelAll();
 }
