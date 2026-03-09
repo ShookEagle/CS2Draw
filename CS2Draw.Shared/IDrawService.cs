@@ -15,9 +15,24 @@ public interface IDrawService {
   // Beams
   BeamBuilder Beam(Vector from, Vector to);
 
-  // Looping
-  BeaconBuilder Beacon(CCSPlayerController player);
+  // Trails
   TrailBuilder Trail(CBaseEntity anchor);
+  
+  // Beacons 
+  /// <summary>
+  /// Start a beacon on a player. Replaces any existing beacon on that player.
+  /// Uses team color by default — override with .Color() on the builder.
+  /// </summary>
+  BeaconBuilder Beacon(CCSPlayerController player);
+
+  /// <summary>Returns true if the player currently has an active beacon.</summary>
+  bool HasBeacon(CCSPlayerController player);
+
+  /// <summary>Stop and remove the beacon for a specific player.</summary>
+  void RemoveBeacon(CCSPlayerController player);
+
+  /// <summary>Stop and remove all active beacons. Call on round end.</summary>
+  void RemoveAllBeacons();
 
   // Custom shapes
 

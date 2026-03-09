@@ -1,4 +1,5 @@
 ﻿using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Core.Capabilities;
 using CS2Draw.Timers;
 using CS2DrawShared;
@@ -41,5 +42,21 @@ public class CS2Draw : BasePlugin, IPluginConfig<CS2DrawConfig> {
   public void OnConfigParsed(CS2DrawConfig config) {
     config.EnsureDefaults();
     Config = config;
+  }
+  
+  [GameEventHandler]
+  public HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
+  {
+    service?.RemoveAllBeacons();
+    return HookResult.Continue;
+  }
+
+  [GameEventHandler]
+  public HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
+  {
+    if (@event.Userid != null)
+      service?.RemoveBeacon(@event.Userid);
+
+    return HookResult.Continue;
   }
 }

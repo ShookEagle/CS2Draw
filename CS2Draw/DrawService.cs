@@ -14,30 +14,36 @@ namespace CS2Draw;
 
 public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
   ILogger logger) : IDrawService {
+  private readonly BeaconManager beacons = new();
   private readonly ConcurrentDictionary<Guid, DrawHandle> handles = new();
   private readonly Dictionary<string, IShapeSetup> customShapes = new();
 
   // Shapes 
-
   public CircleBuilder Circle(Vector origin, float radius)
     => new(origin, radius,
       b => spawnShape(b.Origin, new CircleShapeSetup(b.Radius), b));
-
   public RectangleBuilder Rectangle(Vector origin, float width, float height)
     => new(origin, width, height,
       b => spawnShape(b.Origin, new RectangleShapeSetup(b.Width, b.Height), b));
 
   // Beams 
-
   public BeamBuilder Beam(Vector from, Vector to) => new(from, to, spawnBeam);
 
-  // Looping 
-
-  public BeaconBuilder Beacon(CCSPlayerController player)
-    => new(player, startBeacon);
-
+  // Trails 
   public TrailBuilder Trail(CBaseEntity anchor) => new(anchor, startTrail);
 
+  // Beacons
+  public BeaconBuilder Beacon(CCSPlayerController player)
+    => new(player, startBeacon);
+  public bool HasBeacon(CCSPlayerController player)
+    => beacons.Has(player);
+
+  public void RemoveBeacon(CCSPlayerController player)
+    => beacons.Remove(player);
+
+  public void RemoveAllBeacons()
+    => beacons.RemoveAll();
+  
   // Custom 
 
   public void RegisterShape(IShapeSetup setup)
