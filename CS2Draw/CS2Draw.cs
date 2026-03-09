@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Capabilities;
+using CS2Draw.Timers;
 using CS2DrawShared;
 
 namespace CS2Draw;
@@ -17,12 +18,12 @@ public class CS2Draw : BasePlugin, IPluginConfig<CS2DrawConfig> {
     new("cs2draw:service");
 
   public CS2DrawConfig Config { get; set; } = new();
-
-
   private DrawService? service;
 
   public override void Load(bool hotReload) {
-    service = new DrawService(Config);
+    var timer = new TimerService(this);
+    service = new DrawService(Config, timer, Logger);
+
     Capabilities.RegisterPluginCapability(CAPABILITY, () => service);
     RegisterListener<Listeners.OnServerPrecacheResources>(manifest => {
       foreach (var resource in Config.Shapes.Values) {
