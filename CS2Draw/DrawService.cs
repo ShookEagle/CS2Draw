@@ -16,8 +16,7 @@ public sealed class DrawService(CS2DrawConfig config) : IDrawService {
 
   // IDrawService
   public CircleBuilder Circle(Vector origin, float radius)
-    => new(origin, radius,
-      b => spawn(b.Origin, new CircleShapeSetup(b.Radius, b.Segments), b));
+    => new(origin, radius, b => spawn(b.Origin, new CircleShapeSetup(b.Radius), b));
 
   public RectangleBuilder Rectangle(Vector origin, float width, float height)
     => new(origin, width, height,
@@ -42,7 +41,7 @@ public sealed class DrawService(CS2DrawConfig config) : IDrawService {
     ShapeBuilder<T> builder) where T : ShapeBuilder<T> {
     var effectName = config.Resolve(setup.EffectKey);
     if (effectName == null) {
-      //TODO: Logging
+      Console.WriteLine($"Could not find effect for {setup.EffectKey}");
       return NullHandle.INSTANCE;
     }
 
@@ -50,7 +49,7 @@ public sealed class DrawService(CS2DrawConfig config) : IDrawService {
     var particle =
       Utilities.CreateEntityByName<CParticleSystem>("info_particle_system")!;
     particle.EffectName = effectName;
-    particle.Teleport(origin);
+    particle.Teleport(origin, QAngle.Zero, Vector.Zero);
 
     // 2. Shape sets its control points
     var configurator = new ParticleConfigurator(particle);

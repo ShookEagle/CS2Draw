@@ -27,7 +27,7 @@ public abstract class ShapeBuilder<T>(Vector origin) where T : ShapeBuilder<T> {
   /// Set the tint color and which control point to apply it to.
   /// Control point defaults to 0 — only change if your particle expects it elsewhere.
   /// </summary>
-  public T Color(Color color, int controlPoint = 0) {
+  public T Color(Color color, int controlPoint = 1) {
     TintColor = color;
     TintCp    = controlPoint;
     return (T)this;

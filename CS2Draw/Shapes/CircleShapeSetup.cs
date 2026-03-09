@@ -7,7 +7,7 @@ namespace CS2Draw.Shapes;
 /// Circle uses a different draw method in the CS2 PET so particle
 /// count math does not apply — count is passed through as-is.
 /// </summary>
-internal sealed class CircleShapeSetup(float radius, int particles)
+internal sealed class CircleShapeSetup(float radius)
   : IShapeSetup {
   public string EffectKey => "circle";
 
