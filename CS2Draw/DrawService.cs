@@ -139,6 +139,7 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
 
     var timer =
       timers.CreateLoop(2f, () => spawnBeaconTick(builder, effectName));
+    beacons.Add(builder.Player, timer);
     timer.Start();
     return timer;
   }
