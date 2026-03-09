@@ -18,16 +18,20 @@ public class CS2DrawConfig : BasePluginConfig {
       ["heart"]      = "particles/shapes/shape_heart.vpcf",
       ["among_us"]   = "particles/shapes/shape_among_us.vpcf",
       ["jelly_bean"] = "particles/shapes/shape_jelly_bean.vpcf",
+      ["beam"]       = "particles/lines/two_point_beam.vpcf",
+      ["beacon"]     = "particles/beacons/beacon.vpcf",
+      ["trail"]      = "particles/trails/entity_trail.vpcf"
     };
 
   /// <summary>Effect names for built-in shapes.</summary>
   [JsonPropertyName("shapes")]
-  public Dictionary<string, string> Shapes { get; init; } =
-    new(DEFAULT_SHAPES, StringComparer.OrdinalIgnoreCase);
+  public Dictionary<string, string> Shapes { get; } = new(DEFAULT_SHAPES,
+    StringComparer.OrdinalIgnoreCase);
 
   /// <summary>Effect names for consumer-registered custom shapes.</summary>
   [JsonPropertyName("custom")]
-  public Dictionary<string, string> Custom { get; init; } =
+  // ReSharper disable once CollectionNeverUpdated.Global
+  public Dictionary<string, string> Custom { get; } =
     new(StringComparer.OrdinalIgnoreCase);
 
   public void EnsureDefaults() {

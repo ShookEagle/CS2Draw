@@ -9,7 +9,10 @@
     "star": "particles/shapes/star.vpcf",
     "heart": "particles/shapes/heart.vpcf",
     "among_us": "particles/shapes/among_us.vpcf",
-    "jelly_bean": "particles/shapes/jelly_bean.vpcf"
+    "jelly_bean": "particles/shapes/jelly_bean.vpcf",
+    "beam": "particles/lines/two_point_beam.vpcf",
+    "beacon": "particles/beacons/beacon.vpcf",
+    "trail": "particles/trails/entity_trail.vpcf"
   },
   "custom": {
     "my_custom_shape": "particles/shapes/my_custom_shape.vpcf"
