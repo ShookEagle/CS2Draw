@@ -4,14 +4,13 @@ using CS2DrawShared;
 namespace CS2Draw;
 
 public class DrawHandle : IDrawHandle {
-  private readonly CParticleSystem particle;
   private readonly Action<DrawHandle> onCancel;
 
   public Guid Id { get; } = Guid.NewGuid();
   public bool IsAlive { get; private set; } = true;
 
   internal DrawHandle(CParticleSystem particle, Action<DrawHandle> onCancel) {
-    this.particle = particle;
+    this.Particle = particle;
     this.onCancel = onCancel;
   }
 
@@ -20,11 +19,12 @@ public class DrawHandle : IDrawHandle {
     IsAlive = false;
 
     // Stop and remove the particle from the world
-    particle.AcceptInput("Stop");
-    particle.Remove();
+    Particle.Remove();
 
     onCancel(this);
   }
+
+  public CParticleSystem Particle { get; }
 
   // TODO: lifetime management — investigate non-CP based approach
   // Options being explored:

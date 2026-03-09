@@ -1,3 +1,5 @@
+using CounterStrikeSharp.API.Core;
+
 namespace CS2DrawShared;
 
 /// <summary>
@@ -8,4 +10,5 @@ public interface IDrawHandle {
   Guid Id { get; }
   bool IsAlive { get; }
   void Cancel();
+  CParticleSystem? Particle { get; }
 }

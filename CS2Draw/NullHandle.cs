@@ -1,4 +1,5 @@
-﻿using CS2DrawShared;
+﻿using CounterStrikeSharp.API.Core;
+using CS2DrawShared;
 
 namespace CS2Draw;
 
@@ -12,4 +13,8 @@ internal sealed class NullHandle : IDrawHandle {
   public Guid Id { get; } = Guid.Empty;
   public bool IsAlive => false;
   public void Cancel() { }
+
+  [Obsolete("Do not access this property", error: true)]
+  // ReSharper disable once UnassignedGetOnlyAutoProperty
+  public CParticleSystem? Particle { get; }
 }
