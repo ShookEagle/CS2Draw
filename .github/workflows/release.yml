@@ -95,3 +95,9 @@ jobs:
         with:
           files: CS2Draw.zip
           generate_release_notes: true
+          
+      - name: Setup NuGet trusted publishing
+          uses: NuGet/setup-nuget@v2
+
+      - name: Publish package to NuGet.org
+          run: dotnet nuget push "./nupkg/*.nupkg" --source "https://api.nuget.org/v3/index.json" --skip-duplicate
