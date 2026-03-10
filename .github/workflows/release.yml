@@ -96,9 +96,6 @@ jobs:
         with:
           files: CS2Draw.zip
           generate_release_notes: true
-          
-      - name: Setup NuGet trusted publishing
-        uses: NuGet/setup-nuget@v2
 
       - name: Pack CS2Draw.Shared
         shell: bash
@@ -115,8 +112,13 @@ jobs:
 
       - name: Publish package to NuGet.org
         shell: bash
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
           set -e
+
+          echo "Contents of nupkg folder:"
+          ls -la ./nupkg
 
           PACKAGE=$(find ./nupkg -maxdepth 1 -type f -name '*.nupkg' ! -name '*.snupkg' | head -n 1)
 
@@ -125,21 +127,14 @@ jobs:
             exit 1
           fi
 
+          if [ -z "$NUGET_API_KEY" ]; then
+            echo "NUGET_API_KEY is empty or unavailable"
+            exit 1
+          fi
+
+          echo "Publishing: $PACKAGE"
+
           dotnet nuget push "$PACKAGE" \
             --source "https://api.nuget.org/v3/index.json" \
-            --api-key "${{ secrets.NUGET_API_KEY }}" \
+            --api-key "$NUGET_API_KEY" \
             --skip-duplicate
-          
-      - name: Publish symbols package to NuGet.org
-        shell: bash
-        run: |
-          SYMBOLS=$(find ./nupkg -maxdepth 1 -type f -name '*.snupkg' | head -n 1)
-
-          if [ -n "$SYMBOLS" ]; then
-            echo "Publishing $SYMBOLS"
-            dotnet nuget push "$SYMBOLS" \
-              --source "https://api.nuget.org/v3/index.json" \
-              --skip-duplicate
-          else
-            echo "No symbols package found, skipping"
-          fi
