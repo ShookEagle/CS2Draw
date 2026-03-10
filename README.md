@@ -1,255 +1,228 @@
 # CS2Draw
-CS2Draw is a centralized world-space shape rendering service for CS2 plugins using CParticleSystems. CS2Draw handles the particles, lifetime, and cleanup. Particles Must be created using an addon. For help feel free to reach out to me on discord or chekc the examples.
 
-This package was built for use on [EdgeGamers](https://www.edgegamers.com/forums/news/) servers and is shared as a demonstration of what's possible with CS2 particles. It isn't intended for wide use, but if it gains traction I'll look into expanding it — including `CEnvBeam` support and growing it into a more fully-featured drawing utility.
+A centralized world-space shape rendering service for CS2 plugins using `CParticleSystem`
 
-# CS2Draw.Shared
-The shared contracts library for CS2Draw. This is the **only** project your plugin needs to reference.
+> Built for use on [EdgeGamers](https://www.edgegamers.com/forums/news/) servers and shared as a demonstration of what's
+> possible with CS2 particles. If this gains popularity, I'll look into expanding this to be a fully-fledged API.
+> See [PARTICLES.md](./PARTICLES.md) for help creating compatible particle effects in the CS2 Particle Editor.
+
+> Huge shout to [Letaryat](https://github.com/Letaryat) for spearheading this, see full credits at the bottom.
+
+---
+
+## Requirements
+
+- [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp)—Plugin framework
+- [MultiAddonManager](https://github.com/Source2ZE/MultiAddonManager)—Required to mount the addon containing the `.vpcf`
+  particle files
+
+> Particles **will not render** without a mounted addon. See [PARTICLES.md](./PARTICLES.md) for help setting that up.
+
+An addon containing all built-in CS2Draw particle files is available on
+the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3682043071). The raw `.vpcf` files are also
+included in this repo under `particles/` if you want to build your own or use them as reference.
+
+---
 
 ## Setup
-In your plugin, declare the capability reference using the same key CS2Draw registers under:
+
+Add `CS2Draw.Shared` to your plugin's `.csproj` then resolve the capability in `OnAllPluginsLoaded`:
 
 ```csharp
-using CS2Draw.Contracts;
-using CounterStrikeSharp.API.Core.Capabilities;
+private static readonly PluginCapability<IDrawService> DrawCapability = new("cs2draw:service");
 
-public sealed class ConsumerPlugin : BasePlugin
+public override void OnAllPluginsLoaded(bool hotReload)
 {
-    private static readonly PluginCapability<IDrawService> DrawCapability = new("cs2draw:service");
+    var draw = DrawCapability.Get();
+    if (draw == null) return;
 
-    public override void OnAllPluginsLoaded(bool hotReload)
-    {
-        var draw = DrawCapability.Get();
-        if (draw == null)
-        {
-            Console.WriteLine("[MyPlugin] CS2Draw not loaded.");
-            return;
-        }
-
-        // you're ready to draw
-    }
+    // ready to draw
 }
 ```
 
-> CS2Draw must be loaded before your plugin calls `.Get()`. Use `OnAllPluginsLoaded` not `Load`.
+> CS2Draw must be loaded before your plugin. Always resolve in `OnAllPluginsLoaded`, not `Load`.
 
 ---
 
-## Drawing Built-in Shapes
+## Built-in Shapes
 
 Every draw call follows the same pattern:
 
-```
-service.Shape(origin, ...geometry params...)
-    .ChainOptions()
-    .Draw();
+```csharp
+draw.Shape(origin, ...params...).Options().Draw();
 ```
 
-`.Draw()` returns an `IDrawHandle`. It is safe to discard if you don't need early cancellation.
-
----
+`.Draw()` returns an `IDrawHandle` — safe to discard if you don't need interaction with the particle after creation.
 
 ### Circle
 
 ```csharp
-draw.Circle(origin, radius);
-```
-
-| Parameter | Type     | Description                        |
-|-----------|----------|------------------------------------|
-| origin    | `Vector` | World position of the circle center |
-| radius    | `float`  | Radius in world units              |
-
-**Shape-specific options**
-
-| Method                  | Default | Description                              |
-|-------------------------|---------|------------------------------------------|
-| `.WithSegments(int n)`  | `32`    | Line segments approximating the circle. Higher = smoother. |
-
-**Examples**
-
-```csharp
-// minimal
-draw.Circle(origin, 100f).Draw();
-
-// fully configured
-draw.Circle(origin, 100f)
-    .WithSegments(64)
+draw.Circle(origin, radius)
+    .WithSegments(64)   // default 32 — higher = smoother
     .Color(Color.Red)
     .WithLifetime(10f)
-    .Particles(30)
     .Draw();
-
-// permanent until cancelled
-var handle = draw.Circle(origin, 100f)
-    .Color(Color.White)
-    .Infinite()
-    .Draw();
-
-handle.Cancel(); // remove it early
 ```
-
----
 
 ### Rectangle
 
 ```csharp
-draw.Rectangle(origin, width, height);
-```
-
-| Parameter | Type     | Description                              |
-|-----------|----------|------------------------------------------|
-| origin    | `Vector` | World position of the rectangle center   |
-| width     | `float`  | Width in world units                     |
-| height    | `float`  | Height in world units                    |
-
-**Examples**
-
-```csharp
-// minimal
-draw.Rectangle(origin, 200f, 100f).Draw();
-
-// fully configured
-draw.Rectangle(origin, 200f, 100f)
+draw.Rectangle(origin, width, height)
     .Color(Color.Blue)
     .WithLifetime(5f)
     .Draw();
+```
+
+### Beam
+
+```csharp
+draw.Beam(startPos, endPos)
+    .Color(Color.Yellow)
+    .Draw();
+```
+
+---
+
+## Beacons
+
+Beacons loop on a player and default to team color (Red = T, Blue = CT, White = FFA). Returns an `ILoopTimer` — call
+`.Stop()` to end it.
+
+```csharp
+// team color
+var beacon = draw.Beacon(player).Start();
+
+// color override
+var beacon = draw.Beacon(player)
+    .Color(Color.Purple)
+    .WithOffset(16f)    // Z offset from ground, default 8
+    .Start();
+
+beacon.Stop();
+```
+
+CS2Draw automatically cleans up beacons on round end and player disconnect. You can also manage them manually:
+
+```csharp
+draw.HasBeacon(player);       // check
+draw.RemoveBeacon(player);    // stop one
+draw.RemoveAllBeacons();      // stop all
+```
+
+---
+
+## Trails
+
+Trails attach to any `CBaseEntity` and spawn a new particle on a repeating interval. Returns an `ILoopTimer`.
+
+```csharp
+var trail = draw.Trail(player.PlayerPawn.Value!)
+    .Color(Color.Cyan)
+    .WithInterval(2f)   // default 2s
+    .Start();
+
+trail.Stop(); // existing particles fade naturally
 ```
 
 ---
 
 ## Base Options
 
-All shapes share these options. They can be chained in any order.
+All drawables share these — chains in any order.
 
-| Method                          | Default | Description                                                                                       |
-|---------------------------------|---------|---------------------------------------------------------------------------------------------------|
-| `.Color(Color, int cp = 0)`     | null    | Tint color and the control point to apply it to. CP defaults to `1`.                              |
-| `.Particles(int count)`         | `20`    | Number of particles to spawn for this shape. Often has contraints per shape to get a clean shape. |
-| `.WithLifetime(float seconds)`  | `5f`    | How long the shape stays visible.                                                                 |
-| `.Infinite()`                   | —       | Keep the shape alive until `.Cancel()` is called on the handle.                                   |
+| Method                         | Default | Description                                                   |
+|--------------------------------|---------|---------------------------------------------------------------|
+| `.Color(Color, int cp = 1)`    | none    | Tint color and control point to apply it to                   |
+| `.Particles(int count)`        | `20`    | Particle count — has per-shape constraints for a clean result |
+| `.WithLifetime(float seconds)` | `5f`    | How long the shape stays visible                              |
+| `.Infinite()`                  | —       | Permanent until `.Cancel()` is called                         |
 
 ---
 
-## Handles
-
-Every `.Draw()` call returns an `IDrawHandle`. You can discard it for fire-and-forget, or hold it for control.
-
-```csharp
-public interface IDrawHandle
-{
-    Guid Id      { get; }
-    bool IsAlive { get; }
-    void Cancel();
-}
-```
-
-**Examples**
+## Handles and Cancellation
 
 ```csharp
 // fire and forget
 draw.Circle(origin, 50f).Color(Color.Green).Draw();
 
-// hold and cancel
-var handle = draw.Rectangle(origin, 200f, 100f)
-    .Infinite()
-    .Draw();
+// hold for early cancel
+var handle = draw.Circle(origin, 100f).Infinite().Draw();
+if (handle.IsAlive) handle.Cancel();
 
-// later...
-if (handle.IsAlive)
-    handle.Cancel();
-```
-
----
-
-## Bulk Cancellation
-
-Cancel all active drawings at once:
-
-```csharp
+// cancel everything
 draw.CancelAll();
 ```
-
-Useful for round end cleanup, player disconnect, or any event where all visuals should be cleared.
 
 ---
 
 ## Custom Shapes
 
-If you need a shape CS2Draw doesn't provide, you can register your own. CS2Draw still owns the spawn sequence — you only define the control points.
-
-### Step 1 — Add your effect name to `cs2draw.json`
+### 1. Add your effect to `cs2draw.json`
 
 ```json
 {
   "custom": {
-    "my_star": "particles/myaddon/star.vpcf"
+    "my_star": "particles/path_to_star/star.vpcf"
   }
 }
 ```
 
-### Step 2 — Implement `IShapeSetup`
+### 2. Implement `IShapeSetup`
 
 ```csharp
-using CS2Draw.Contracts;
-
 public sealed class StarSetup : IShapeSetup
 {
-    private readonly int   _points;
-    private readonly float _outerRadius;
-    private readonly float _innerRadius;
-
     public string EffectKey => "my_star";
 
-    public StarSetup(int points, float outerRadius, float innerRadius)
+    public void Configure(IParticleConfigurator cp, int particleCount)
     {
-        _points      = points;
-        _outerRadius = outerRadius;
-        _innerRadius = innerRadius;
-    }
-
-    public void Configure(IParticleConfigurator cp)
-    {
-        // set whatever control points your particle file expects
-        cp.SetCP(4, _points, 0, 0);
-        cp.SetCP(5, _outerRadius, 0, 0);
-        cp.SetCP(6, _innerRadius, 0, 0);
+        cp.SetCP(4, particleCount, 0, 0);
+        cp.SetCP(5, outerRadius,   0, 0);
+        cp.SetCP(6, innerRadius,   0, 0);
     }
 }
 ```
 
-### Step 3 — Register and draw
+### 3. Register and draw
 
 ```csharp
-public override void Load(bool hotReload)
-{
-    var draw = DrawCapability.Get();
+draw.RegisterShape(new StarSetup());
 
-    // register once
-    draw.RegisterShape(new StarSetup(5, 100f, 50f));
-
-    // draw it — gets the full builder chain
-    draw.Custom(origin, new StarSetup(5, 100f, 50f))
-        .Color(Color.Yellow)
-        .WithLifetime(8f)
-        .Draw();
-}
+draw.Custom(origin, new StarSetup())
+    .Color(Color.Yellow)
+    .WithLifetime(8f)
+    .Draw();
 ```
 
-> `Configure()` is called after the particle is created and teleported, before `DispatchSpawn` and `Start`. You only set control points — CS2Draw handles everything else.
+> `Configure()` is called after the particle is created and teleported, before `DispatchSpawn` and `Start`. CS2Draw
+> handles everything else.
 
 ---
 
 ## Color and Control Points
 
-CS2 particles apply tint via a specific control point (`TintCP`) on the `CParticleSystem`. By default CS2Draw applies color to CP `1`. If your particle file expects the tint on a different CP, pass it explicitly:
+Tint is applied via a control point on `CParticleSystem`. Default CP is `1`. Override if your particle expects it
+elsewhere:
 
 ```csharp
-draw.Circle(origin, 100f)
-    .Color(Color.Red, controlPoint: 3)
-    .Draw();
+draw.Circle(origin, 100f).Color(Color.Red, controlPoint: 3).Draw();
 ```
 
-If you don't call `.Color()` at all, no tint is applied and the particle renders with its baked-in color. If particles are alwasy rendering with a particular color  its likely that you've not got your colors setup right. Check the example or feel free to reach out to me on discord.
+If your shapes always render the wrong color, _like always white_, your particle's tint CP is likely misconfigured.
+See [PARTICLES.md](./PARTICLES.md) for guidance or reach out on Discord.
 
 ---
+
+## Credits
+
+**[Letaryat](https://github.com/Letaryat)** — His work
+on [CS2-CustomTrailAndTracers](https://github.com/Letaryat/CS2-CustomTrailAndTracers) was the original inspiration for
+CS2Draw and demonstrated what's truly possible with CS2's particle system. This project wouldn't exist without it.
+
+---
+
+## Questions?
+
+Feel free to reach out on Discord or open an issue on [GitHub](https://github.com/ShookEagle/CS2Draw/issues).
+
+If you need an example of a plugin using CS2Draw, check out [Jailbreak](https://github.com/edgegamers/Jailbreak).
