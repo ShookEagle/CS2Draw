@@ -130,15 +130,15 @@ jobs:
             --skip-duplicate    
           
       - name: Publish symbols package to NuGet.org
-          shell: bash
-          run: |
-            SYMBOLS=$(find ./nupkg -maxdepth 1 -type f -name '*.snupkg' | head -n 1)
-            
-            if [ -n "$SYMBOLS" ]; then
-              echo "Publishing $SYMBOLS"
-              dotnet nuget push "$SYMBOLS" \
-                --source "https://api.nuget.org/v3/index.json" \
-                --skip-duplicate
-            else
-              echo "No symbols package found, skipping"
-            fi    
+        shell: bash
+        run: |
+          SYMBOLS=$(find ./nupkg -maxdepth 1 -type f -name '*.snupkg' | head -n 1)
+
+          if [ -n "$SYMBOLS" ]; then
+            echo "Publishing $SYMBOLS"
+            dotnet nuget push "$SYMBOLS" \
+              --source "https://api.nuget.org/v3/index.json" \
+              --skip-duplicate
+          else
+            echo "No symbols package found, skipping"
+          fi
