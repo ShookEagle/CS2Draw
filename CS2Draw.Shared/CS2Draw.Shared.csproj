@@ -5,6 +5,22 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>CS2DrawShared</RootNamespace>
+
+        <!-- NuGet package metadata -->
+        <PackageId>CS2DrawShared</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>ShookEagle</Authors>
+        <Copyright>ShookEagle</Copyright>
+        <Description>SA centralized world-space particle rendering service for CS2 plugins.</Description>
+        <PackageTags>cs2;counterstrikesharp;particles;drawing</PackageTags>
+        <PackageProjectUrl>https://github.com/ShookEagle/CS2Draw</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/ShookEagle/CS2Draw</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
     <ItemGroup>
