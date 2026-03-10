@@ -1,0 +1,97 @@
+﻿name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    env:
+      DOTNET_VERSION: '8.0.x'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore CS2Draw.Shared
+        run: dotnet restore CS2Draw.Shared/CS2Draw.Shared.csproj
+
+      - name: Restore CS2Draw
+        run: dotnet restore CS2Draw/CS2Draw.csproj
+
+      - name: Build CS2Draw.Shared
+        run: dotnet build CS2Draw.Shared/CS2Draw.Shared.csproj --configuration Release --no-restore
+
+      - name: Build CS2Draw
+        run: dotnet build CS2Draw/CS2Draw.csproj --configuration Release --no-restore
+
+      - name: Locate build outputs
+        id: paths
+        shell: bash
+        run: |
+          set -e
+
+          SHARED_DLL="$(find CS2Draw.Shared/bin/Release -type f -name 'CS2Draw.Shared.dll' | head -n 1)"
+          PLUGIN_DLL="$(find CS2Draw/bin/Release -type f -name 'CS2Draw.dll' | head -n 1)"
+
+          if [ -z "$SHARED_DLL" ]; then
+            echo "Could not find CS2Draw.Shared.dll"
+            exit 1
+          fi
+
+          if [ -z "$PLUGIN_DLL" ]; then
+            echo "Could not find CS2Draw.dll"
+            exit 1
+          fi
+
+          echo "shared_dir=$(dirname "$SHARED_DLL")" >> "$GITHUB_OUTPUT"
+          echo "plugin_dir=$(dirname "$PLUGIN_DLL")" >> "$GITHUB_OUTPUT"
+
+      - name: Stage release files
+        shell: bash
+        run: |
+          set -e
+
+          mkdir -p package/plugins/CS2Draw
+          mkdir -p package/shared/CS2Draw.Shared
+
+          echo "Copying plugin files from: ${{ steps.paths.outputs.plugin_dir }}"
+          echo "Copying shared files from: ${{ steps.paths.outputs.shared_dir }}"
+
+          # Copy plugin output, but exclude any CS2Draw.Shared-generated files
+          rsync -av \
+            --exclude='CS2Draw.Shared.dll' \
+            --exclude='CS2Draw.Shared.pdb' \
+            --exclude='CS2Draw.Shared.deps.json' \
+            --exclude='CS2Draw.Shared.runtimeconfig.json' \
+            --exclude='CS2Draw.Shared.xml' \
+            "${{ steps.paths.outputs.plugin_dir }}/" \
+            "package/plugins/CS2Draw/"
+
+          # Copy shared output
+          rsync -av \
+            "${{ steps.paths.outputs.shared_dir }}/" \
+            "package/shared/CS2Draw.Shared/"
+
+      - name: Create zip
+        shell: bash
+        run: |
+          cd package
+          zip -r ../CS2Draw.zip .
+
+      - name: Create GitHub release and upload zip
+        uses: softprops/action-gh-release@v2
+        with:
+          files: CS2Draw.zip
+          generate_release_notes: true
