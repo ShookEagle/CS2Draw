@@ -97,7 +97,47 @@ jobs:
           generate_release_notes: true
           
       - name: Setup NuGet trusted publishing
-        uses: NuGet/setup-nuget@v2
+          uses: NuGet/setup-nuget@v2
 
-      - name: Publish package to NuGet.org
-        run: dotnet nuget push "./nupkg/*.nupkg" --source "https://api.nuget.org/v3/index.json" --skip-duplicate
+            - name: Pack CS2Draw.Shared
+              shell: bash
+              run: |
+                mkdir -p ./nupkg
+                dotnet pack CS2Draw.Shared/CS2Draw.Shared.csproj \
+                  --configuration Release \
+                  --no-build \
+                  -p:PackageVersion=${GITHUB_REF_NAME#v} \
+                  -o ./nupkg
+                
+                echo "Packed files:"
+                ls -la ./nupkg
+
+            - name: Publish package to NuGet.org
+              shell: bash
+              run: |
+                set -e
+                
+                PACKAGE=$(find ./nupkg -maxdepth 1 -type f -name '*.nupkg' ! -name '*.snupkg' | head -n 1)
+                
+                if [ -z "$PACKAGE" ]; then
+                  echo "No .nupkg file found in ./nupkg"
+                  exit 1
+                fi
+                
+                echo "Publishing $PACKAGE"
+                dotnet nuget push "$PACKAGE" \
+                  --source "https://api.nuget.org/v3/index.json" \
+                  --skip-duplicate
+                
+            - name: Publish symbols package to NuGet.org
+                shell: bash
+                run: |
+                  SYMBOLS=$(find ./nupkg -maxdepth 1 -type f -name '*.snupkg' | head -n 1)
+                  
+                  if [ -n "$SYMBOLS" ]; then
+                    echo "Publishing $SYMBOLS"
+                    dotnet nuget push "$SYMBOLS" \
+                      --source "https://api.nuget.org/v3/index.json" \
+                      --skip-duplicate
+                  else
+                    echo "No symbols package found, skipping"
