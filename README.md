@@ -26,17 +26,40 @@ included in this repo under `particles/` if you want to build your own or use th
 
 ## Setup
 
-Add `CS2Draw.Shared` to your plugin's `.csproj` then resolve the capability in `OnAllPluginsLoaded`:
+
+### 1. Install the NuGet package
+
+Add `CS2DrawShared` to your plugin's `.csproj`:
+
+```xml
+<PackageReference Include="CS2DrawShared" Version="1.0.0" />
+```
+
+Or via the .NET CLI:
+
+```bash
+dotnet add package CS2DrawShared --version 1.0.0
+```
+
+The package is available on [NuGet](https://www.nuget.org/packages/CS2DrawShared).
+
+### 2. Resolve the capability
 
 ```csharp
-private static readonly PluginCapability<IDrawService> DrawCapability = new("cs2draw:service");
+using CS2DrawShared;
+using CounterStrikeSharp.API.Core.Capabilities;
 
-public override void OnAllPluginsLoaded(bool hotReload)
+public sealed class MyPlugin : BasePlugin
 {
-    var draw = DrawCapability.Get();
-    if (draw == null) return;
+    private static readonly PluginCapability DrawCapability = new("cs2draw:service");
 
-    // ready to draw
+    public override void OnAllPluginsLoaded(bool hotReload)
+    {
+        var draw = DrawCapability.Get();
+        if (draw == null) return;
+
+        // ready to draw
+    }
 }
 ```
 
