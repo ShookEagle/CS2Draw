@@ -178,9 +178,14 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
 
     var timer =
       timers.CreateLoop(2f, () => spawnBeaconTick(builder, effectName));
-    beacons.Add(builder.Player, timer);
-    timer.Start();
-    return timer;
+    beacons.Add(builder.Player, builder, timers, b => 
+    {
+      var effect = config.Resolve("beacon");
+      if (effect != null) spawnBeaconTick(b, effect);
+    });
+    // Return a NullLoopTimer — the caller doesn't need to manage the timer directly.
+    // The shared timer is owned by BeaconManager.
+    return NullLoopTimer.INSTANCE;
   }
 
   private static void

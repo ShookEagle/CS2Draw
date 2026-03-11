@@ -1,55 +1,62 @@
 ﻿using CounterStrikeSharp.API.Core;
+using CS2DrawShared.Builders;
 using CS2DrawShared.Timers;
 
 namespace CS2Draw;
 
 /// <summary>
-/// Tracks active beacons per player.
-/// Ensures one beacon per player and handles cleanup on disconnect or round end.
-/// Keyed by SteamID so the reference stays valid even if the player object changes.
+/// Tracks active beacons per player. A single shared timer drives all beacons
+/// so all players pulse in sync and we never have more than one timer running.
 /// </summary>
-internal sealed class BeaconManager
-{
-  private readonly Dictionary<ulong, ILoopTimer> active = new();
+internal sealed class BeaconManager {
+  private readonly Dictionary<ulong, BeaconBuilder> active = new();
+  private ILoopTimer? sharedTimer;
 
   /// <summary>
-  /// Add or replace a beacon for a player.
-  /// If the player already has an active beacon it is stopped first.
+  /// Add or replace a beacon for a player and ensure the shared timer is running.
   /// </summary>
-  public void Add(CCSPlayerController player, ILoopTimer timer)
-  {
-    var steamId = player.SteamID;
+  public void Add(CCSPlayerController player, BeaconBuilder builder,
+    ITimerService timers, Action<BeaconBuilder> onTick) {
+    // replace existing entry if present — builder holds the new config
+    active[player.SteamID] = builder;
 
-    if (active.TryGetValue(steamId, out var existing))
-    {
-      existing.Stop();
-      Console.WriteLine($"[CS2Draw] Replaced existing beacon for {player.PlayerName}.");
-    }
-
-    active[steamId] = timer;
+    // start the shared timer only if it isn't already running
+    if (sharedTimer is { IsRunning: true }) return;
+    sharedTimer = timers.CreateLoop(2f, () => tick(onTick));
+    sharedTimer.Start();
   }
 
-  /// <summary>Stop and remove the beacon for a specific player.</summary>
-  public void Remove(CCSPlayerController player)
-  {
-    var steamId = player.SteamID;
-
-    if (!active.TryGetValue(steamId, out var timer)) return;
-
-    timer.Stop();
-    active.Remove(steamId);
+  /// <summary>
+  /// Remove a single player's beacon. Stops the shared timer if no beacons remain.
+  /// </summary>
+  public void Remove(CCSPlayerController player) {
+    active.Remove(player.SteamID);
+    stopTimerIfEmpty();
   }
 
-  /// <summary>Returns true if the player currently has an active beacon.</summary>
-  public bool Has(CCSPlayerController player)
-    => active.TryGetValue(player.SteamID, out var timer) && timer.IsRunning;
-
-  /// <summary>Stop and remove all active beacons. Called on round end.</summary>
-  public void RemoveAll()
-  {
-    foreach (var timer in active.Values)
-      timer.Stop();
-
+  /// <summary>
+  /// Remove all beacons and stop the shared timer immediately.
+  /// </summary>
+  public void RemoveAll() {
     active.Clear();
+    sharedTimer?.Stop();
+    sharedTimer = null;
+  }
+
+  public bool Has(CCSPlayerController player)
+    => active.ContainsKey(player.SteamID);
+
+  /// <summary>
+  /// Called every 2s by the shared timer — fires the tick callback for every active beacon.
+  /// </summary>
+  private void tick(Action<BeaconBuilder> onTick) {
+    // snapshot keys to avoid mutation during iteration
+    foreach (var builder in active.Values.ToArray()) onTick(builder);
+  }
+
+  private void stopTimerIfEmpty() {
+    if (active.Count > 0) return;
+    sharedTimer?.Stop();
+    sharedTimer = null;
   }
 }
