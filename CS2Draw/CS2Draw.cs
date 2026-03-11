@@ -34,6 +34,8 @@ public class CS2Draw : BasePlugin, IPluginConfig<CS2DrawConfig> {
       foreach (var resource in Config.Custom.Values) {
         manifest.AddResource(resource);
       }
+
+      manifest.AddResource("soundevents/soundevents_beacon.vsndevts");
     });
   }
 
@@ -43,19 +45,17 @@ public class CS2Draw : BasePlugin, IPluginConfig<CS2DrawConfig> {
     config.EnsureDefaults();
     Config = config;
   }
-  
+
   [GameEventHandler]
-  public HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
-  {
+  public HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info) {
     service?.RemoveAllBeacons();
     return HookResult.Continue;
   }
 
   [GameEventHandler]
-  public HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
-  {
-    if (@event.Userid != null)
-      service?.RemoveBeacon(@event.Userid);
+  public HookResult OnPlayerDisconnect(EventPlayerDisconnect @event,
+    GameEventInfo info) {
+    if (@event.Userid != null) service?.RemoveBeacon(@event.Userid);
 
     return HookResult.Continue;
   }
