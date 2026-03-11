@@ -117,7 +117,7 @@ your particle, but you may reference it in Pre Emission Operators or Initializer
 
 CS2 only exposes **CP0 through CP6** to server-side code. That's 7 control points total that
 `AcceptInput("SetControlPoint")` can reach. Your particle file can use more CPs internally, but those can only be set
-from within the PET itself via Pre Emission Operators — not from code.
+from within the PET itself via Pre Emission Operators — not from code. Should `CounterStrikeSharp` add EKV this number would jump to 63
 
 ### CS2Draw's CP Convention
 
