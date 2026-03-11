@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API.Modules.Utils;
+using CS2DrawShared.Builders;
 
-namespace CS2DrawShared.Builders;
+namespace CS2DrawShared.Shapes;
 
 public sealed class CircleBuilder(Vector origin, float radius,
   Func<CircleBuilder, IDrawHandle> commit)

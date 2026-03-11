@@ -7,6 +7,7 @@ using CS2Draw.Shapes;
 using CS2Draw.Timers;
 using CS2DrawShared;
 using CS2DrawShared.Builders;
+using CS2DrawShared.Shapes;
 using CS2DrawShared.Timers;
 using Microsoft.Extensions.Logging;
 
