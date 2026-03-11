@@ -22,6 +22,12 @@ public class DrawHandle : IDrawHandle {
 
     onCancel(this);
   }
+  
+  public void SetCp(int cp, float x, float y, float z)
+  {
+    if (!IsAlive) return;
+    Particle.AcceptInput("SetControlPoint", value: $"{cp}: {x} {y} {z}");
+  }
 
   public CParticleSystem Particle { get; }
 

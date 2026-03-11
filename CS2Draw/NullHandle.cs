@@ -14,6 +14,8 @@ internal sealed class NullHandle : IDrawHandle {
   public bool IsAlive => false;
   public void Cancel() { }
 
+  public void SetCp(int cp, float x, float y, float z) { }
+
   [Obsolete("Do not access this property", error: true)]
   // ReSharper disable once UnassignedGetOnlyAutoProperty
   public CParticleSystem? Particle { get; }
