@@ -11,7 +11,16 @@ namespace CS2DrawShared;
 public interface IDrawService {
   // Shapes
   CircleBuilder Circle(Vector origin, float radius);
+  TriangleBuilder Triangle(Vector origin, float width, float height);
   RectangleBuilder Rectangle(Vector origin, float width, float height);
+  DiamondBuilder Diamond(Vector origin, float width, float height);
+  PentagonBuilder Pentagon(Vector origin, float width, float height);
+  HexagonBuilder Hexagon(Vector origin, float width, float height);
+  StarBuilder Star(Vector origin, float width, float height);
+  HeartBuilder Heart(Vector origin, float width, float height);
+  JellyBeanBuilder JellyBean(Vector origin, float width, float height);
+  AmongUsBuilder AmongUs(Vector origin, float width, float height);
+  
 
   // Beams
   BeamBuilder Beam(Vector from, Vector to);

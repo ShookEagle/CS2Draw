@@ -23,9 +23,43 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
   public CircleBuilder Circle(Vector origin, float radius)
     => new(origin, radius,
       b => spawnShape(b.Origin, new CircleShapeSetup(b.Radius), b));
+
+  public TriangleBuilder Triangle(Vector origin, float width, float height)
+    => new(origin, width, height,
+      b => spawnShape(b.Origin, new TriangleShapeSetup(b.Width, b.Height), b));
+
+  public DiamondBuilder Diamond(Vector origin, float width, float height)
+    => new(origin, width, height,
+      b => spawnShape(b.Origin, new DiamondShapeSetup(b.Width, b.Height), b));
+
   public RectangleBuilder Rectangle(Vector origin, float width, float height)
     => new(origin, width, height,
       b => spawnShape(b.Origin, new RectangleShapeSetup(b.Width, b.Height), b));
+
+  public PentagonBuilder Pentagon(Vector origin, float width, float height)
+    => new(origin, width, height,
+      b => spawnShape(b.Origin, new PentagonShapeSetup(b.Width, b.Height), b));
+
+  public HexagonBuilder Hexagon(Vector origin, float width, float height)
+    => new(origin, width, height,
+      b => spawnShape(b.Origin, new HexagonShapeSetup(b.Width, b.Height), b));
+
+  public StarBuilder Star(Vector origin, float width, float height)
+    => new(origin, width, height,
+      b => spawnShape(b.Origin, new StarShapeSetup(b.Width, b.Height), b));
+
+  public HeartBuilder Heart(Vector origin, float width, float height)
+    => new(origin, width, height,
+      b => spawnShape(b.Origin, new HeartShapeSetup(b.Width, b.Height), b));
+
+  public JellyBeanBuilder JellyBean(Vector origin, float width, float height)
+    => new(origin, width, height,
+      b => spawnShape(b.Origin, new JellyBeanShapeSetup(b.Width, b.Height), b));
+
+  public AmongUsBuilder AmongUs(Vector origin, float width, float height)
+    => new(origin, width, height,
+      b => spawnShape(b.Origin, new AmongUsShapeSetup(b.Width, b.Height), b));
+
 
   // Beams 
   public BeamBuilder Beam(Vector from, Vector to) => new(from, to, spawnBeam);
@@ -36,15 +70,14 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
   // Beacons
   public BeaconBuilder Beacon(CCSPlayerController player)
     => new(player, startBeacon);
-  public bool HasBeacon(CCSPlayerController player)
-    => beacons.Has(player);
+
+  public bool HasBeacon(CCSPlayerController player) => beacons.Has(player);
 
   public void RemoveBeacon(CCSPlayerController player)
     => beacons.Remove(player);
 
-  public void RemoveAllBeacons()
-    => beacons.RemoveAll();
-  
+  public void RemoveAllBeacons() => beacons.RemoveAll();
+
   // Custom 
 
   public void RegisterShape(IShapeSetup setup)
@@ -66,8 +99,8 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
     var effectName = config.Resolve(setup.EffectKey);
     if (effectName == null) {
       logger.LogWarning(
-        "[CS2Draw] No effect found for key '{SetupEffectKey}'. Check cs2draw.json."
-        , setup.EffectKey);
+        "[CS2Draw] No effect found for key '{SetupEffectKey}'. Check cs2draw.json.",
+        setup.EffectKey);
       return NullHandle.INSTANCE;
     }
 
