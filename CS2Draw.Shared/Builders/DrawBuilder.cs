@@ -12,8 +12,8 @@ namespace CS2DrawShared.Builders;
 public abstract class DrawBuilder<T>(Vector origin) where T : DrawBuilder<T> {
   public Vector Origin = origin;
   public int ParticleCount = 20;
-  protected float Lifetime = 5f;
-  protected bool IsInfinite = false;
+  public float Lifetime;
+  public bool IsInfinite = true;
   public Color? TintColor;
   public int TintCp = 1;
 
@@ -40,9 +40,14 @@ public abstract class DrawBuilder<T>(Vector origin) where T : DrawBuilder<T> {
     return (T)this;
   }
 
-  /// <summary>Keep the shape alive until explicitly cancelled.</summary>
+  /// <summary>
+  /// Keep this drawable alive until Cancel() is called explicitly.
+  /// This is the default — only needed if you previously called WithLifetime()
+  /// and want to revert.
+  /// </summary>
   public T Infinite() {
     IsInfinite = true;
+    Lifetime   = 0f;
     return (T)this;
   }
 

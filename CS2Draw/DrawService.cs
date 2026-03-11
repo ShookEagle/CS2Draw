@@ -89,6 +89,7 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
   // Lifecycle 
 
   public void CancelAll() {
+    beacons.RemoveAll();
     foreach (var handle in handles.Values.ToArray()) handle.Cancel();
   }
 
@@ -123,7 +124,8 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
     var handle = new DrawHandle(particle, h => handles.TryRemove(h.Id, out _));
     handles[handle.Id] = handle;
 
-    // TODO: wire up lifetime using builder.Lifetime / builder.IsInfinite
+    if (builder is { IsInfinite: false, Lifetime: > 0f })
+      timers.Delay(builder.Lifetime, () => handle.Cancel());
 
     return handle;
   }
@@ -158,7 +160,8 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
     var handle = new DrawHandle(beam, h => handles.TryRemove(h.Id, out _));
     handles[handle.Id] = handle;
 
-    // TODO: lifetime management
+    if (builder is { IsInfinite: false, Lifetime: > 0f })
+      timers.Delay(builder.Lifetime, () => handle.Cancel());
 
     return handle;
   }

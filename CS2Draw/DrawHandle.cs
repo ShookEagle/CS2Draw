@@ -10,7 +10,7 @@ public class DrawHandle : IDrawHandle {
   public bool IsAlive { get; private set; } = true;
 
   internal DrawHandle(CParticleSystem particle, Action<DrawHandle> onCancel) {
-    this.Particle = particle;
+    Particle = particle;
     this.onCancel = onCancel;
   }
 
@@ -18,7 +18,8 @@ public class DrawHandle : IDrawHandle {
     if (!IsAlive) return;
     IsAlive = false;
 
-    // Stop and remove the particle from the world
+    // Destroy and remove the particle from the world
+    Particle.AcceptInput("DestroyImmediately");
     Particle.Remove();
 
     onCancel(this);
@@ -26,9 +27,8 @@ public class DrawHandle : IDrawHandle {
 
   public CParticleSystem Particle { get; }
 
-  // TODO: lifetime management — investigate non-CP based approach
+  // TODO: lifetime management — investigate CP based approach
   // Options being explored:
-  //   - Server-side timer that calls Cancel() after n seconds
-  //   - Hooking particle death events if exposed by CSS#
   //   - Possibly Look into EndCap effects to allow particles to have a smooth end or fade out
+  //   - Setting LifeTime within a particle w/o affecting particle age effects
 }
