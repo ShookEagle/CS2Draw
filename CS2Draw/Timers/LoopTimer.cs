@@ -14,6 +14,7 @@ internal sealed class LoopTimer(float interval, Action callback,
   public void Start() {
     if (IsRunning) return;
     IsRunning = true;
+    callback();
     schedule();
   }
 

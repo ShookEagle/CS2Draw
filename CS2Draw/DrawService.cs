@@ -68,8 +68,10 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
   public TrailBuilder Trail(CBaseEntity anchor) => new(anchor, startTrail);
 
   // Beacons
-  public BeaconBuilder Beacon(CCSPlayerController player)
-    => new(player, startBeacon);
+  public BeaconBuilder Beacon(CCSPlayerController player) {
+    if (HasBeacon(player)) RemoveBeacon(player);
+    return new BeaconBuilder(player, startBeacon);
+  }
 
   public bool HasBeacon(CCSPlayerController player) => beacons.Has(player);
 
@@ -110,7 +112,7 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
     if (particle == null) return NullHandle.INSTANCE;
 
     particle.EffectName = effectName;
-    particle.Teleport(origin);
+    particle.Teleport(origin, QAngle.Zero, Vector.Zero);
 
     var configurator = new ParticleConfigurator(particle);
     setup.Configure(configurator, builder.ParticleCount);
@@ -143,7 +145,7 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
     if (beam == null) return NullHandle.INSTANCE;
 
     beam.EffectName = effectName;
-    beam.Teleport(builder.From);
+    beam.Teleport(builder.From, QAngle.Zero, Vector.Zero);
 
     beam.AcceptInput("SetControlPoint", value: $"2: 2 0 0");
     beam.AcceptInput("SetControlPoint",
@@ -194,7 +196,7 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
     if (particle == null) return;
 
     particle.EffectName = effectName;
-    particle.Teleport(pos);
+    particle.Teleport(pos, QAngle.Zero, Vector.Zero);
     particle.StartActive = true;
 
     // use override color if set, otherwise fall back to team color
@@ -230,7 +232,7 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
     if (particle == null) return;
 
     particle.EffectName = effectName;
-    particle.Teleport(builder.Anchor.AbsOrigin);
+    particle.Teleport(builder.Anchor.AbsOrigin, QAngle.Zero, Vector.Zero);
 
     particle.AcceptInput("SetControlPoint", value: "2: 0 0 0");
 

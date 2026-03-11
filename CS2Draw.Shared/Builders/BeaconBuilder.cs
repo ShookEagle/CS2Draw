@@ -26,7 +26,7 @@ public class BeaconBuilder(CCSPlayerController player,
   /// Override the team color with a specific color.
   /// By default the beacon uses team color: Red = T, Blue = CT, White = FFA.
   /// </summary>
-  public new BeaconBuilder Color(Color color, int controlPoint = 0) {
+  public new BeaconBuilder Color(Color color, int controlPoint = 1) {
     Override = color;
     return base.Color(color, controlPoint);
   }
