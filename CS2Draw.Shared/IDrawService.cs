@@ -1,7 +1,7 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
 using CS2DrawShared.Builders;
-using CS2DrawShared.Shapes;
+using CS2DrawShared.Builders.Shapes;
 
 namespace CS2DrawShared;
 

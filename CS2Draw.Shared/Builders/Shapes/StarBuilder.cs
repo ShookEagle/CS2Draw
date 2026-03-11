@@ -1,7 +1,6 @@
 ﻿using CounterStrikeSharp.API.Modules.Utils;
-using CS2DrawShared.Builders;
 
-namespace CS2DrawShared.Shapes;
+namespace CS2DrawShared.Builders.Shapes;
 
 public sealed class StarBuilder(Vector origin, float width, float height,
   Func<StarBuilder, IDrawHandle> commit) : DrawBuilder<StarBuilder>(origin) {

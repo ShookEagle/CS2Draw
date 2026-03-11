@@ -1,7 +1,6 @@
 ﻿using CounterStrikeSharp.API.Modules.Utils;
-using CS2DrawShared.Builders;
 
-namespace CS2DrawShared.Shapes;
+namespace CS2DrawShared.Builders.Shapes;
 
 public sealed class HeartBuilder(Vector origin, float width, float height,
   Func<HeartBuilder, IDrawHandle> commit) : DrawBuilder<HeartBuilder>(origin) {
