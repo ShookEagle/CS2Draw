@@ -25,13 +25,12 @@ public class CS2DrawConfig : BasePluginConfig {
 
   /// <summary>Effect names for built-in shapes.</summary>
   [JsonPropertyName("shapes")]
-  public Dictionary<string, string> Shapes { get; } = new(DEFAULT_SHAPES,
+  public Dictionary<string, string> Shapes { get; set; } = new(DEFAULT_SHAPES,
     StringComparer.OrdinalIgnoreCase);
 
   /// <summary>Effect names for consumer-registered custom shapes.</summary>
   [JsonPropertyName("custom")]
-  // ReSharper disable once CollectionNeverUpdated.Global
-  public Dictionary<string, string> Custom { get; } =
+  public Dictionary<string, string> Custom { get; set; } =
     new(StringComparer.OrdinalIgnoreCase);
 
   public void EnsureDefaults() {

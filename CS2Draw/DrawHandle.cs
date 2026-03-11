@@ -18,9 +18,7 @@ public class DrawHandle : IDrawHandle {
     if (!IsAlive) return;
     IsAlive = false;
 
-    // Destroy and remove the particle from the world
     Particle.AcceptInput("DestroyImmediately");
-    Particle.Remove();
 
     onCancel(this);
   }

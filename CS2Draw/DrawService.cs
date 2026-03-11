@@ -119,7 +119,7 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
 
     particle.StartActive = true;
     particle.DispatchSpawn();
-    particle.AcceptInput("Start");
+    //particle.AcceptInput("Start");
 
     var handle = new DrawHandle(particle, h => handles.TryRemove(h.Id, out _));
     handles[handle.Id] = handle;
