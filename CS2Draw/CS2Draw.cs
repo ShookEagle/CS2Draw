@@ -35,7 +35,7 @@ public class CS2Draw : BasePlugin, IPluginConfig<CS2DrawConfig> {
         manifest.AddResource(resource);
       }
 
-      manifest.AddResource("soundevents/generic/soundevents_beacon.vsndevts");
+      manifest.AddResource(Config.BeaconSoundEventFile);
     });
   }
 

@@ -188,7 +188,7 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
     return NullLoopTimer.INSTANCE;
   }
 
-  private static void
+  private void
     spawnBeaconTick(BeaconBuilder builder, string effectName) {
     var pawn = builder.Player.PlayerPawn.Value;
     if (pawn?.AbsOrigin == null) return;
@@ -212,7 +212,7 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
     particle.AcceptInput("Start");
     particle.AcceptInput("SetParent", pawn, particle, "!activator");
 
-    builder.Player.EmitSound("beacon_blip");
+    builder.Player.EmitSound(config.BeaconSoundEvent);
   }
 
   private ILoopTimer startTrail(TrailBuilder builder) {

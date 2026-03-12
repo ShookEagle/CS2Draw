@@ -32,6 +32,12 @@ public class CS2DrawConfig : BasePluginConfig {
   [JsonPropertyName("custom")]
   public Dictionary<string, string> Custom { get; set; } =
     new(StringComparer.OrdinalIgnoreCase);
+  
+  [JsonPropertyName("beacon_sound_event_file")]
+  public string BeaconSoundEventFile { get; set; } = "soundevents/soundevents_beacon.vsndevts";
+  
+  [JsonPropertyName("beacon_sound_event")]
+  public string BeaconSoundEvent { get; set; } = "generic.beacon.blip";
 
   public void EnsureDefaults() {
     foreach (var (key, value) in DEFAULT_SHAPES) { Shapes.TryAdd(key, value); }
