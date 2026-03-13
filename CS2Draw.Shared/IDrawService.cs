@@ -28,6 +28,13 @@ public interface IDrawService {
   // Trails
   TrailBuilder Trail(CBaseEntity anchor);
   
+  /// <summary>
+  /// Start a custom trail using an IShapeSetup for each spawned particle.
+  /// Attach to any CBaseEntity — call SetParent() on the returned handle
+  /// to re-parent mid-loop (e.g. detach from a player pawn and freeze in place).
+  /// </summary>
+  CustomTrailBuilder CustomTrail(CBaseEntity anchor, IShapeSetup setup);
+  
   // Beacons 
   /// <summary>
   /// Start a beacon on a player. Replaces any existing beacon on that player.

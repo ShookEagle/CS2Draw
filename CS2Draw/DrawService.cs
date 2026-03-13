@@ -66,6 +66,9 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
 
   // Trails 
   public TrailBuilder Trail(CBaseEntity anchor) => new(anchor, startTrail);
+  
+  public CustomTrailBuilder CustomTrail(CBaseEntity anchor, IShapeSetup setup)
+    => new(anchor, setup, b => startCustomTrail(b));
 
   // Beacons
   public BeaconBuilder Beacon(CCSPlayerController player) {
@@ -176,8 +179,7 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
       return NullLoopTimer.INSTANCE;
     }
 
-    var timer =
-      timers.CreateLoop(2f, () => spawnBeaconTick(builder, effectName));
+    timers.CreateLoop(2f, () => spawnBeaconTick(builder, effectName));
     beacons.Add(builder.Player, builder, timers, b => 
     {
       var effect = config.Resolve("beacon");
@@ -247,6 +249,59 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
     particle.DispatchSpawn();
     particle.AcceptInput("Start");
     particle.AcceptInput("SetParent", builder.Anchor, particle, "!activator");
+  }
+  
+  private ITrailHandle startCustomTrail(CustomTrailBuilder builder)
+  {
+    var effectName = config.Resolve(builder.Setup.EffectKey);
+    if (effectName == null)
+    {
+      Console.WriteLine($"[CS2Draw] No effect found for key '{builder.Setup.EffectKey}'. Check cs2draw.json.");
+      return NullTrailHandle.INSTANCE;
+    }
+ 
+    // Handle is created first so the tick closure can close over it
+    // and read the current anchor + CP overrides each tick
+    CustomTrailHandle? handle = null;
+
+    var customTrailHandle = handle;
+    var timer = timers.CreateLoop(builder.Interval,
+      () => spawnCustomTrailTick(builder, effectName, customTrailHandle!));
+ 
+    handle = new CustomTrailHandle(timer, builder.Anchor);
+    timer.Start();
+ 
+    return handle;
+  }
+ 
+  private static void spawnCustomTrailTick(CustomTrailBuilder builder,
+    string effectName, CustomTrailHandle handle)
+  {
+    var anchor = handle.CurrentAnchor;
+    if (anchor.AbsOrigin == null) return;
+ 
+    var particle = Utilities.CreateEntityByName<CParticleSystem>("info_particle_system");
+    if (particle == null) return;
+ 
+    particle.EffectName = effectName;
+    particle.Teleport(anchor.AbsOrigin);
+ 
+    var configurator = new ParticleConfigurator(particle);
+    builder.Setup.Configure(configurator, builder.ParticleCount);
+ 
+    // Apply tint from builder
+    applyTint(particle, builder.TintColor, builder.TintCp);
+ 
+    // Apply any runtime CP overrides set via handle.SetCP()
+    foreach (var (cp, val) in handle.CPOverrides)
+      particle.AcceptInput("SetControlPoint", value: $"{cp}: {val.x} {val.y} {val.z}");
+ 
+    particle.StartActive = true;
+    particle.DispatchSpawn();
+    particle.AcceptInput("Start");
+ 
+    // Parent to current anchor — this is what SetParent() changes
+    particle.AcceptInput("SetParent", anchor, particle, "!activator");
   }
 
   private static void
