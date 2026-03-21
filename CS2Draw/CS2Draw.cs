@@ -59,4 +59,11 @@ public class CS2Draw : BasePlugin, IPluginConfig<CS2DrawConfig> {
 
     return HookResult.Continue;
   }
+
+  [GameEventHandler]
+  public HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info) {
+    if (@event.Userid != null) service?.RemoveBeacon(@event.Userid);
+    
+    return HookResult.Continue;
+  }
 }
