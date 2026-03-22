@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CS2DrawShared;
 
 namespace CS2Draw;
@@ -18,7 +19,11 @@ public class DrawHandle : IDrawHandle {
     if (!IsAlive) return;
     IsAlive = false;
 
+    Particle.AcceptInput("Stop");
     Particle.AcceptInput("DestroyImmediately");
+    Server.RunOnTick(Server.TickCount + 16, () => {
+      Particle.Remove();
+    });
 
     onCancel(this);
   }

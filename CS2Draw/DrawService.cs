@@ -116,6 +116,7 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
 
     particle.EffectName = effectName;
     particle.Teleport(origin, QAngle.Zero, Vector.Zero);
+    particle.LifeState = 5;
 
     var configurator = new ParticleConfigurator(particle);
     setup.Configure(configurator, builder.ParticleCount);
@@ -124,7 +125,7 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
 
     particle.StartActive = true;
     particle.DispatchSpawn();
-    //particle.AcceptInput("Start");
+    particle.AcceptInput("Start");
 
     var handle = new DrawHandle(particle, h => handles.TryRemove(h.Id, out _));
     handles[handle.Id] = handle;
