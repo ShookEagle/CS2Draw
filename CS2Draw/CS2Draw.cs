@@ -66,4 +66,10 @@ public class CS2Draw : BasePlugin, IPluginConfig<CS2DrawConfig> {
     
     return HookResult.Continue;
   }
+
+  [GameEventHandler]
+  public HookResult OnRoundStart(EventPlayerSpawn @event, GameEventInfo info) {
+    service?.RemoveAllBeacons();
+    return HookResult.Continue;
+  }
 }

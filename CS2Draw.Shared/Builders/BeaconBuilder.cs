@@ -12,6 +12,14 @@ public class BeaconBuilder(CCSPlayerController player,
   public CCSPlayerController Player { get; } = player;
   public float ZOffset { get; private set; } = 8f;
   public Color? Override { get; private set; }
+  private CParticleSystem? previousParticle;
+  public CParticleSystem? PreviousParticle {
+    get => previousParticle;
+    set {
+      previousParticle?.Remove();
+      previousParticle = value;
+    }
+  }
 
   /// <summary>
   /// Z offset to lift the beacon off the ground.

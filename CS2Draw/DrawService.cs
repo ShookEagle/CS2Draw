@@ -214,6 +214,8 @@ public sealed class DrawService(CS2DrawConfig config, ITimerService timers,
     particle.DispatchSpawn();
     particle.AcceptInput("Start");
     particle.AcceptInput("SetParent", pawn, particle, "!activator");
+    
+    builder.PreviousParticle = particle; 
 
     builder.Player.EmitSound(config.BeaconSoundEvent);
   }
